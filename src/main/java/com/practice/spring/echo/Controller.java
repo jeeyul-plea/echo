@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-public class controller {
+public class Controller {
     @GetMapping("/echo")
     public String echoGet(@RequestParam String message) {
         return message;
