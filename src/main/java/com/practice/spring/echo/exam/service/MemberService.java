@@ -5,6 +5,9 @@ import com.practice.spring.echo.exam.entity.dto.MemberDto;
 import com.practice.spring.echo.exam.mapper.MemberMapper;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -39,6 +42,14 @@ public class MemberService {
 
    public void deleteMember(Long memberId) {
         memberMapper.deleteMember(memberId);
+   }
+
+   public Page<MemberDto.Base> findAllPage(Pageable pageable) {
+       int size = pageable.getPageSize();
+       long offset = pageable.getOffset();
+       List<MemberDto.Base> findMembers = memberMapper.findMembersPage(size, offset);
+       int total = memberMapper.countMembers();
+       return new PageImpl<>(findMembers, pageable, total);
    }
 
 

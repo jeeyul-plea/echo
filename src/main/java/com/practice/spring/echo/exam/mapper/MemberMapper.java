@@ -14,5 +14,7 @@ public interface MemberMapper {
     void updateMember(@Param("id") Long id, @Param("name") String name, @Param("age") Integer age, @Param("hobby") String hobby);
     void deleteMember(@Param("id") Long id);
 
+    List<MemberDto.Base> findMembersPage(@Param("size") int size, @Param("offset") long offset);
+    int countMembers();
     List<MemberDto.Base> findAll();
 }

@@ -58,4 +58,16 @@
         SELECT m.name,m.age,m.hobby
         FROM Member m
     </select>
+
+    <select id="countMembers" resultType="int">
+        select count(*) from Member
+    </select>
+
+    <select id="findMembersPage" resultType="hashmap">
+        SELECT m.name,m.age,m.hobby
+        FROM Member m
+        ORDER BY m.name
+        LIMIT #{size}
+        OFFSET #{offset}
+    </select>
 </mapper>
