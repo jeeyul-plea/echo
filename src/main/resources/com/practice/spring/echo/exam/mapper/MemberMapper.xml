@@ -1,0 +1,31 @@
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.practice.spring.echo.exam.mapper.MemberMapper">
+
+    <insert id="saveMember" useGeneratedKeys="true">
+        insert into Member(name,age)
+        values (#{name}, #{age})
+    </insert>
+
+    <select id="findMember" resultType="com.practice.spring.echo.exam.entity.Member">
+        select * from Member m WHERE m.id =#{id}
+    </select>
+
+    <update id="updateMember">
+        UPDATE Member m
+        SET m.name = #{name},
+            m.age = #{age}
+        WHERE m.id = #{id}
+    </update>
+
+    <delete id="deleteMember">
+        DELETE FROM Member m
+        WHERE m.id = #{id}
+    </delete>
+
+    <select id="findAll" resultType="hashmap">
+        SELECT m.name,m.age
+        FROM Member m
+    </select>
+</mapper>
