@@ -4,8 +4,29 @@
 <mapper namespace="com.practice.spring.echo.exam.mapper.MemberMapper">
 
     <insert id="saveMember" useGeneratedKeys="true">
-        insert into Member(name,age)
-        values (#{name}, #{age})
+        INSERT INTO Member
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="name != null">
+                name,
+            </if>
+            <if test="age != null">
+                age,
+            </if>
+            <if test="hobby != null">
+                hobby,
+            </if>
+        </trim>
+        <trim prefix="VALUES (" suffix=")" suffixOverrides=",">
+            <if test="name != null">
+                #{name},
+            </if>
+            <if test="age != null">
+                #{age},
+            </if>
+            <if test="hobby != null">
+                #{hobby},
+            </if>
+        </trim>
     </insert>
 
     <select id="findMember" resultType="com.practice.spring.echo.exam.entity.Member">
@@ -14,8 +35,17 @@
 
     <update id="updateMember">
         UPDATE Member m
-        SET m.name = #{name},
-            m.age = #{age}
+        <set>
+            <if test="name != null">
+                m.name = #{name},
+            </if>
+            <if test="age != null">
+                m.age = #{age},
+            </if>
+            <if test="hobby != null">
+                m.hobby = #{hobby},
+            </if>
+        </set>
         WHERE m.id = #{id}
     </update>
 
@@ -25,7 +55,7 @@
     </delete>
 
     <select id="findAll" resultType="hashmap">
-        SELECT m.name,m.age
+        SELECT m.name,m.age,m.hobby
         FROM Member m
     </select>
 </mapper>

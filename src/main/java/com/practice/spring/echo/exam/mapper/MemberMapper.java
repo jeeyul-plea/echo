@@ -9,9 +9,9 @@ import java.util.List;
 
 @Mapper
 public interface MemberMapper {
-    void saveMember(@Param("name") String name, @Param("age") Integer age);
+    void saveMember(@Param("name") String name, @Param("age") Integer age, @Param("hobby") String hobby);
     Member findMember(@Param("id") Long id);
-    void updateMember(@Param("id") Long id, @Param("name") String name, @Param("age") Integer age);
+    void updateMember(@Param("id") Long id, @Param("name") String name, @Param("age") Integer age, @Param("hobby") String hobby);
     void deleteMember(@Param("id") Long id);
 
     List<MemberDto.Base> findAll();

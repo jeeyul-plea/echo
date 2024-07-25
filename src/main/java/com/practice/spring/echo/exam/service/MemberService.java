@@ -20,7 +20,7 @@ public class MemberService {
 
 
     public void saveMember(MemberDto.Base dto) {
-        memberMapper.saveMember(dto.getName(), dto.getAge());
+        memberMapper.saveMember(dto.getName(), dto.getAge(), dto.getHobby());
     }
     @Transactional(readOnly = true)
     public Member findMember(Long memberId){
@@ -34,7 +34,7 @@ public class MemberService {
 
 
     public void updateMember(MemberDto.Update dto) {
-        memberMapper.updateMember(dto.getId(),dto.getName(),dto.getAge());
+        memberMapper.updateMember(dto.getId(),dto.getName(),dto.getAge(), dto.getHobby());
     }
 
    public void deleteMember(Long memberId) {

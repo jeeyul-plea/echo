@@ -13,11 +13,13 @@ public class MemberDto {
     @NoArgsConstructor
     public static class Base {
         String name;
-        int age;
+        Integer age;
+        String hobby;
 
         public Base(Member member) {
             this.name = member.getName();
             this.age = member.getAge();
+            this.hobby = member.getHobby();
         }
     }
 
@@ -28,6 +30,7 @@ public class MemberDto {
     public static class Update{
         Long id;
         String name;
-        int age;
+        Integer age;
+        String hobby;
     }
 }
