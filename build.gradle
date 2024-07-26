@@ -6,8 +6,8 @@ plugins //gradle task(gradle의 프로젝트를 구성하는 요소로 빌드가
 	// 테스트 코드 src/test/java, 테스트 코드의 리소스 src/test/resources
 	// 위의 규칙들을 기반하여 gradle task들을 수행
 	// 다음과 같은 task 들이 추가된다 (compile.Java, processResources, classes ... clean)
-	id 'org.springframework.boot' version '3.3.1'
-	id 'io.spring.dependency-management' version '1.1.5'
+	id 'org.springframework.boot' version '3.3.2'
+	id 'io.spring.dependency-management' version '1.1.6'
 	// 의존성 관리 모듈
 }
 
@@ -53,20 +53,33 @@ bootJar {
 
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-web'
-	compileOnly 'org.projectlombok:lombok'
-	annotationProcessor 'org.projectlombok:lombok'
-	testImplementation 'org.springframework.boot:spring-boot-starter-test'
-	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
-	//jpa
-	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-	// H2
-	runtimeOnly 'com.h2database:h2'
-	//mybatis
-	implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter:3.0.3'
 }
 
 tasks.named('test') {
 	useJUnitPlatform()
+}
+
+subprojects { // 각 모듈에 적용할 공통 설정
+	apply plugin: 'java'
+	apply plugin: 'org.springframework.boot'
+	apply plugin: 'io.spring.dependency-management'
+
+	dependencies { // 롬복은 공통적으로 사용하는 의존성이니 여기서 끌어다 사용
+		compileOnly 'org.projectlombok:lombok'
+		annotationProcessor 'org.projectlombok:lombok'
+	}
+
+	tasks.named('bootJar') { //빌드할 때 bootjar 파일로 하겠다는 의미
+		enabled = false
+	}
+
+	tasks.named('jar') { //빌드할 때 jar 파일로 하겠다는 의미
+		enabled = true
+	}
+
+	tasks.named('test') {
+		useJUnitPlatform()
+	}
 }
 
 // 패키지 정하는 법
