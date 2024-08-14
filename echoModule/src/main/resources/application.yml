@@ -1,0 +1,8 @@
+spring:
+  application:
+    name: echoModule
+
+
+  plea:
+    name: jykim
+    height: 178
