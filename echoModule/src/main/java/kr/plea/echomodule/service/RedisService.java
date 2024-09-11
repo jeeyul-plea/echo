@@ -27,6 +27,8 @@ public class RedisService {
 	public void setValues(String key, String data, Duration duration) {
 		ValueOperations<String, Object> ops = redisTemplate.opsForValue();
 		ops.set(key, data, duration);
+
+
 	}
 
 	@Transactional(readOnly = true)
