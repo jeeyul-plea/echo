@@ -1,123 +1,102 @@
-
-buildscript {
-	repositories {
-		mavenLocal()
-		maven { url 'https://maven.aliyun.com/repository/google/' }
-		maven { url 'https://maven.aliyun.com/repository/public/' }
-		maven { url 'https://maven.aliyun.com/repository/spring/' }
-		maven { url 'https://maven.aliyun.com/repository/gradle-plugin/' }
-		maven { url 'https://maven.aliyun.com/repository/spring-plugin/' }
-		maven {
-			url "https://plugins.gradle.org/m2/"
-		}
-		mavenCentral()
-	}
-	dependencies {
-		classpath("org.springframework.boot:spring-boot-gradle-plugin:2.4.4")
-		classpath "io.spring.gradle:dependency-management-plugin:1.0.11.RELEASE"
-	}
-}
-
-plugins { //gradle task(gradle의 프로젝트를 구성하는 요소로 빌드가 실행하는 최소 단위의 작업) 구성
-	id 'java'
-	// main, test 두 가지의 소스세트가 제공
-	// 프로덕션 코드 src/main/java , 프로덕션 코드의 리소스들 src/main/java/resources
-	// 테스트 코드 src/test/java, 테스트 코드의 리소스 src/test/resources
-	// 위의 규칙들을 기반하여 gradle task들을 수행
-	// 다음과 같은 task 들이 추가된다 (compile.Java, processResources, classes ... clean)
-	// 의존성 관리 모듈
-}
-apply plugin: "org.springframework.boot"
-apply plugin: "io.spring.dependency-management"
-
-group = 'com.practice.spring'
-version = '0.0.1-SNAPSHOT'
-// Semantic 버전의 각 숫자는 Major 버전, Minor 버전, Patch 버전을 의미
-// Major 버전은 이전 버전들과의 호환성을 나타내며 이전 버전과 호환되지 않는 큰 변화가 있을 때, 대대적인 변화가 일어났을 때
-// 이전 Major 버전의 API 접근 방식으로 현재 버전에서 접근이 불가능할 때 버전을 증가시킨다.
-// Minor 버전은 하위 버전과 호환이 되면서 새로운 기능이 추가되거나 변경되었을 때 올려준다.
-// Patch 버전은 버그수정, 내부적인 코드 변경 등 사용자가 알아차리지 못할 작은 변화가 있을 때 올려준다. 이전 버전과 호환 가능해야함
-
-// 버저닝에 적용해야 하는 일반적인 규칙
-// 첫 버전은 0.1.0으로 시작한다.
-// 소프트웨어가 실 서비스에 사용되는, 사용자들이 믿고 쓸 수 있는 안정적인 상태라면 1.0.0이 될 수 있다.
-// 특정 버전을 배포하고 나면 그 버전의 내용은 절대 변경하지 말아야 한다. 변경 사항이 있다면 반드시 새로운 버전으로 배포하도록 한다.
-// Major 버전이 변경될 때 Minor, Patch는 0으로 초기화한다.
-// Minor 버전이 변경될 때 Patch는 0으로 초기화한다.
-
-// Snapshot -> 해당 버전을 정식으로 릴리즈하기 전까지의 최신 상태를 본떠 둔 상태로, 현재 지속적으로 업데이트가 진행중이란 뜻
-// M -> MileStone 의 약자로 주요 기능이 완성되자마자 테스트용으로 공개한 버전을 의미
-// RC -> Release candidate 전반적인 기능과 버그들이 수정되었으며 최종 릴리즈 이전 단계이다.
-// GA -> General Availability 최종 Release 단계, 대부분의 기능과 버그들이 안정화 된 버전
-
-java {
-	toolchain {
-		languageVersion = JavaLanguageVersion.of(17)
-	}
-}
-
-configurations {
-	compileOnly {
-		extendsFrom annotationProcessor
-	}
-}
-
-repositories {
-	mavenCentral()
-}
-
-bootJar {
-	archiveFileName = 'test.jar'
-}
-
-dependencies {
-	implementation 'org.springframework.boot:spring-boot-starter-web'
-}
-
-tasks.named('test') {
-	useJUnitPlatform()
-}
-
-subprojects { // 각 모듈에 적용할 공통 설정
-	apply plugin: 'java'
-	apply plugin: 'org.springframework.boot'
-	apply plugin: 'io.spring.dependency-management'
-
-	dependencies { // 롬복은 공통적으로 사용하는 의존성이니 여기서 끌어다 사용
-		compileOnly 'org.projectlombok:lombok'
-		annotationProcessor 'org.projectlombok:lombok'
-	}
-
-	tasks.named('bootJar') { //빌드할 때 bootjar 파일로 하겠다는 의미
-		enabled = false
-	}
-
-	tasks.named('jar') { //빌드할 때 jar 파일로 하겠다는 의미
-		enabled = true
-	}
-
-	tasks.named('test') {
-		useJUnitPlatform()
-	}
-}
-
-// 패키지 정하는 법
-//plugins {
-//	...
-//	id 'maven-publish'
+//
+//buildscript {
+//	repositories {
+//		mavenLocal()
+//		maven { url 'https://maven.aliyun.com/repository/google/' }
+//		maven { url 'https://maven.aliyun.com/repository/public/' }
+//		maven { url 'https://maven.aliyun.com/repository/spring/' }
+//		maven { url 'https://maven.aliyun.com/repository/gradle-plugin/' }
+//		maven { url 'https://maven.aliyun.com/repository/spring-plugin/' }
+//		maven {
+//			url "https://plugins.gradle.org/m2/"
+//		}
+//		mavenCentral()
+//	}
+//	dependencies {
+//		classpath("org.springframework.boot:spring-boot-gradle-plugin:2.4.4")
+//		classpath "io.spring.gradle:dependency-management-plugin:1.0.11.RELEASE"
+//	}
 //}
 //
-//publishing {
-//	...
+//plugins { //gradle task(gradle의 프로젝트를 구성하는 요소로 빌드가 실행하는 최소 단위의 작업) 구성
+//	id 'java'
+//	// main, test 두 가지의 소스세트가 제공
+//	// 프로덕션 코드 src/main/java , 프로덕션 코드의 리소스들 src/main/java/resources
+//	// 테스트 코드 src/test/java, 테스트 코드의 리소스 src/test/resources
+//	// 위의 규칙들을 기반하여 gradle task들을 수행
+//	// 다음과 같은 task 들이 추가된다 (compile.Java, processResources, classes ... clean)
+//	// 의존성 관리 모듈
+//}
+//apply plugin: "org.springframework.boot"
+//apply plugin: "io.spring.dependency-management"
 //
-//	repositories {
-//		maven {
-//			name = "GitHubPackages"
-//			url = "https://maven.pkg.github.com/octocat/hello-world"
-//			credentials {
-//				username = System.getenv("GITHUB_ACTOR")
-//				password = System.getenv("GITHUB_TOKEN")
-//			}
-//		}
+//group = 'com.practice.spring'
+//version = '0.0.1-SNAPSHOT'
+//// Semantic 버전의 각 숫자는 Major 버전, Minor 버전, Patch 버전을 의미
+//// Major 버전은 이전 버전들과의 호환성을 나타내며 이전 버전과 호환되지 않는 큰 변화가 있을 때, 대대적인 변화가 일어났을 때
+//// 이전 Major 버전의 API 접근 방식으로 현재 버전에서 접근이 불가능할 때 버전을 증가시킨다.
+//// Minor 버전은 하위 버전과 호환이 되면서 새로운 기능이 추가되거나 변경되었을 때 올려준다.
+//// Patch 버전은 버그수정, 내부적인 코드 변경 등 사용자가 알아차리지 못할 작은 변화가 있을 때 올려준다. 이전 버전과 호환 가능해야함
+//
+//// 버저닝에 적용해야 하는 일반적인 규칙
+//// 첫 버전은 0.1.0으로 시작한다.
+//// 소프트웨어가 실 서비스에 사용되는, 사용자들이 믿고 쓸 수 있는 안정적인 상태라면 1.0.0이 될 수 있다.
+//// 특정 버전을 배포하고 나면 그 버전의 내용은 절대 변경하지 말아야 한다. 변경 사항이 있다면 반드시 새로운 버전으로 배포하도록 한다.
+//// Major 버전이 변경될 때 Minor, Patch는 0으로 초기화한다.
+//// Minor 버전이 변경될 때 Patch는 0으로 초기화한다.
+//
+//// Snapshot -> 해당 버전을 정식으로 릴리즈하기 전까지의 최신 상태를 본떠 둔 상태로, 현재 지속적으로 업데이트가 진행중이란 뜻
+//// M -> MileStone 의 약자로 주요 기능이 완성되자마자 테스트용으로 공개한 버전을 의미
+//// RC -> Release candidate 전반적인 기능과 버그들이 수정되었으며 최종 릴리즈 이전 단계이다.
+//// GA -> General Availability 최종 Release 단계, 대부분의 기능과 버그들이 안정화 된 버전
+//
+//java {
+//	toolchain {
+//		languageVersion = JavaLanguageVersion.of(17)
+//	}
+//}
+//
+//configurations {
+//	compileOnly {
+//		extendsFrom annotationProcessor
+//	}
+//}
+//
+//repositories {
+//	mavenCentral()
+//}
+//
+//bootJar {
+//	archiveFileName = 'test.jar'
+//}
+//
+//dependencies {
+//	implementation 'org.springframework.boot:spring-boot-starter-web'
+//}
+//
+//tasks.named('test') {
+//	useJUnitPlatform()
+//}
+//
+//subprojects { // 각 모듈에 적용할 공통 설정
+//	apply plugin: 'java'
+//	apply plugin: 'org.springframework.boot'
+//	apply plugin: 'io.spring.dependency-management'
+//
+//	dependencies { // 롬복은 공통적으로 사용하는 의존성이니 여기서 끌어다 사용
+//		compileOnly 'org.projectlombok:lombok'
+//		annotationProcessor 'org.projectlombok:lombok'
+//	}
+//
+//	tasks.named('bootJar') { //빌드할 때 bootjar 파일로 하겠다는 의미
+//		enabled = false
+//	}
+//
+//	tasks.named('jar') { //빌드할 때 jar 파일로 하겠다는 의미
+//		enabled = true
+//	}
+//
+//	tasks.named('test') {
+//		useJUnitPlatform()
 //	}
 //}
