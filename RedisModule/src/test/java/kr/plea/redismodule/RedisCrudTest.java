@@ -35,14 +35,15 @@ public class RedisCrudTest {
 	final List<Long> LIST2 = List.of(99999L, 88888L, 77777L, 22222L, 11111L);
 	final List<Long> V2LIST = List.of(22222L, 33333L, 44444L, 55555L);
 	final Duration DURATION = Duration.ofMillis(5000);
-	StatLatencyParam PARAM1;
-	StatLatencyParam PARAM1_2;
-	StatLatencyParam PARAM2;
+	StatLatencyParam PARAM1 = new StatLatencyParam(LIST);
+	StatLatencyParam PARAM1_2 = new StatLatencyParam(LIST2);
+	StatLatencyParam PARAM2 = new StatLatencyParam(V2LIST);
 	private RedisService redisService;
 	private StatSummaryService statSummaryService;
 	private StatSubscriberService statSubscriberService;
 	private NewsService newsService;
-	private NewsContentFindDto NEWS_CONTENT;
+	private final NewsContentFindDto NEWS_CONTENT  = new NewsContentFindDto("AKR20070807170200054", "C", "AKR0", "20070807", "171444", "YNA", "신창섭", "07", "053",
+		"대구경북취재본부", "대구 첫 전용미술관 9일 착공", "대구 첫 전용미술관 착공", "이 기사는 임의로 Element와 내용을 모두 채운 샘플입니다.", "대구 첫 전용미술관 9일 착공  ~~~ 말했따.", true,false);;
 	private ObjectMapper objectMapper = new ObjectMapper();
 
 	LocalDateTime now = LocalDateTime.now();
@@ -64,11 +65,6 @@ public class RedisCrudTest {
 	@BeforeEach
 	void init() {
 		redisService.addValue(KEY, VALUE, DURATION);
-		PARAM1 = new StatLatencyParam(LIST);
-		PARAM1_2 = new StatLatencyParam(LIST2);
-		PARAM2 = new StatLatencyParam(V2LIST);
-		NEWS_CONTENT = new NewsContentFindDto("AKR20070807170200054", "C", "AKR0", "20070807", "171444", "YNA", "신창섭", "07", "053",
-			"대구경북취재본부", "대구 첫 전용미술관 9일 착공", "대구 첫 전용미술관 착공", "이 기사는 임의로 Element와 내용을 모두 채운 샘플입니다.", "대구 첫 전용미술관 9일 착공  ~~~ 말했따.", true,false);
 	}
 
 	@AfterEach
@@ -117,17 +113,17 @@ public class RedisCrudTest {
 
 	}
 
-	// @Test
-	// @DisplayName("Redis에 저장된 데이터는 만료시간이 지나면 삭제된다.")
-	// void expiredTest() {
-	// 	await().pollDelay(Duration.ofMillis(6000)).untilAsserted(
-	// 		() -> {
-	// 			Object expiredValue = redisService.getValue(KEY);
-	// 			assertThat(expiredValue).isNotEqualTo(1);
-	// 			assertThat(expiredValue).isNull();
-	// 		}
-	// 	);
-	// }
+	@Test
+	@DisplayName("Redis에 저장된 데이터는 만료시간이 지나면 삭제된다.")
+	void expiredTest() {
+		await().pollDelay(Duration.ofMillis(6000)).untilAsserted(
+			() -> {
+				Object expiredValue = redisService.getValue(KEY);
+				assertThat(expiredValue).isNotEqualTo(1);
+				assertThat(expiredValue).isNull();
+			}
+		);
+	}
 
 	@Test
 	@DisplayName("PramList 출력해보기")
