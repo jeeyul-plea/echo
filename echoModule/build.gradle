@@ -1,0 +1,82 @@
+
+buildscript {
+    repositories {
+        mavenLocal()
+        maven { url 'https://maven.aliyun.com/repository/google/' }
+        maven { url 'https://maven.aliyun.com/repository/public/' }
+        maven { url 'https://maven.aliyun.com/repository/spring/' }
+        maven { url 'https://maven.aliyun.com/repository/gradle-plugin/' }
+        maven { url 'https://maven.aliyun.com/repository/spring-plugin/' }
+        maven {
+            url "https://plugins.gradle.org/m2/"
+        }
+        mavenCentral()
+    }
+    dependencies {
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:2.4.4")
+        classpath "io.spring.gradle:dependency-management-plugin:1.0.11.RELEASE"
+    }
+}
+
+plugins { //gradle task(gradle의 프로젝트를 구성하는 요소로 빌드가 실행하는 최소 단위의 작업) 구성
+    id 'java'
+    // main, test 두 가지의 소스세트가 제공
+    // 프로덕션 코드 src/main/java , 프로덕션 코드의 리소스들 src/main/java/resources
+    // 테스트 코드 src/test/java, 테스트 코드의 리소스 src/test/resources
+    // 위의 규칙들을 기반하여 gradle task들을 수행
+    // 다음과 같은 task 들이 추가된다 (compile.Java, processResources, classes ... clean)
+    // 의존성 관리 모듈
+}
+apply plugin: "org.springframework.boot"
+apply plugin: "io.spring.dependency-management"
+
+group = 'com.practice.spring'
+version = '0.0.1-SNAPSHOT'
+
+group = 'kr.plea.echomodule'
+version = '0.0.1-SNAPSHOT'
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(17)
+    }
+}
+
+configurations {
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
+}
+tasks.named('bootJar'){ // bootJar 세팅을 켜기
+    enabled = true
+}
+
+tasks.named('jar'){ // jar 설정은 끄기
+    enabled = false
+}
+
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compileOnly 'org.projectlombok:lombok'
+    annotationProcessor 'org.projectlombok:lombok'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+    testImplementation 'org.projectlombok:lombok'
+    testAnnotationProcessor 'org.projectlombok:lombok'
+
+    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+    implementation 'org.modelmapper:modelmapper:2.3.6'
+
+//    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    runtimeOnly 'com.h2database:h2'
+    testImplementation 'org.awaitility:awaitility:4.2.0'
+}
+
+tasks.named('test') {
+    useJUnitPlatform()
+}
