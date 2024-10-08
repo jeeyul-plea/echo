@@ -32,7 +32,7 @@ public class RedisConfig {
 	@Value("${spring.data.redis.ssl.enabled}")
 	private Boolean ssl = null;
 
-	private ObjectMapper objectMapper = new ObjectMapper();
+	private final ObjectMapper objectMapper;
 
 
 	@Bean
@@ -63,6 +63,7 @@ public class RedisConfig {
 		final RedisTemplate<String, Object> template = new RedisTemplate<>();
 		template.setConnectionFactory(redisConnectionFactory());
 		template.setKeySerializer(new StringRedisSerializer());
+		template.setHashKeySerializer(new StringRedisSerializer());
 		template.setValueSerializer(new GenericJackson2JsonRedisSerializer(objectMapper));
 		return template;
 	}

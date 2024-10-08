@@ -9,7 +9,7 @@ import lombok.ToString;
 @Setter
 @NoArgsConstructor
 @ToString
-public class NewsContentFindDto {
+public class NewsContentDto {
 	private String contentId;
 	private String action;
 	private String serviceType;
@@ -25,12 +25,11 @@ public class NewsContentFindDto {
 	private String comment;
 	private String body;
 	private Boolean isUsed;
-	private Boolean isDeleted;
 
-	public NewsContentFindDto(String contentId, String action, String serviceType, String sendData, String sendTime,
+	public NewsContentDto(String contentId, String action, String serviceType, String sendData, String sendTime,
 		String source, String writer, String categoryCode, String deskCode, String deskValue, String title,
 		String subTitle,
-		String comment, String body, Boolean isUsed, Boolean isDeleted) {
+		String comment, String body, Boolean isUsed) {
 		this.contentId = contentId;
 		this.action = action;
 		this.serviceType = serviceType;
@@ -46,6 +45,5 @@ public class NewsContentFindDto {
 		this.comment = comment;
 		this.body = body;
 		this.isUsed = isUsed;
-		this.isDeleted = isDeleted;
 	}
 }

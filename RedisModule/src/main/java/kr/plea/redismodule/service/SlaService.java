@@ -16,15 +16,15 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 public class SlaService {
 
-	private final RedisService redisService;
+	private final RedisTemplateService redisTemplateService;
 
 	@Async
 	public void sendSla(Long latency) {
-		redisService.addValue("latency" , latency, Duration.ofMillis(5000));
+		redisTemplateService.addValue("latency" , latency, Duration.ofMillis(5000));
 	}
 
 	public List<Long> getSla(String key){
-		return redisService.getValues(key);
+		return redisTemplateService.getValues(key);
 	}
 
 	@Scheduled(fixedRate = 5000)

@@ -15,4 +15,5 @@ spring:
 mybatis:
   configuration:
     map-underscore-to-camel-case: true
-  type-aliases-package: com.practice.spring.echo
+  type-aliases-package: kr.plea.testApp.entity
+  mapper-locations: classpath:mapper/*.xml

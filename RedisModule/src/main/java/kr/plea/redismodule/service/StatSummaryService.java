@@ -1,8 +1,6 @@
 package kr.plea.redismodule.service;
 
 import java.time.LocalDate;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -19,17 +17,18 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 public class StatSummaryService {
 	private LocalDate resetDt = LocalDate.now();
-	private final RedisService redisService;
+	private final RedisTemplateService redisTemplateService;
 	final String  key = resetDt.toString();
 	final String key2 = key + "V2";
 	private ObjectMapper mapper = new ObjectMapper();
 
 	public void updateLatency(StatLatencyParam statLatencyParam) {
-		redisService.addAll(key, statLatencyParam.getLatencyList());
+		redisTemplateService.addAll(key, statLatencyParam.getLatencyList());
 	}
 
 	public void updateLatencyV2(StatLatencyParam statLatencyParam) {
-		redisService.addAll(key2, statLatencyParam.getLatencyList());
+		System.out.println("statLatencyParam.getLatencyList() = " + statLatencyParam.getLatencyList());
+		redisTemplateService.addAll(key2, statLatencyParam.getLatencyList());
 	}
 
 	public void printList() {
@@ -43,11 +42,14 @@ public class StatSummaryService {
 	}
 
 	private void printList(String key) {
-        List<Object> obj = redisService.getParamList(key);
-        System.out.println("value = " + obj);
-        List<Long> paramList = obj.stream()
-            .map(value -> mapper.convertValue(value, Long.class))
-            .collect(Collectors.toList());
+        List<Object> obj = redisTemplateService.getParamList(key);
+		List<Long> paramList = obj.stream()
+			.flatMap(o -> ((List<?>) o).stream())
+			.map(o -> Long.parseLong(o.toString()))
+			.collect(Collectors.toList());
+
+		System.out.println("paramList = " + paramList);
+
         for (Long latency : paramList) {
             System.out.println("latency = " + latency);
         }

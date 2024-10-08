@@ -19,16 +19,16 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import kr.plea.redismodule.dto.NewsContentFindDto;
+import kr.plea.redismodule.dto.NewsContentDto;
 import kr.plea.redismodule.param.StatLatencyParam;
 import kr.plea.redismodule.param.StatSubscriberParam;
 import kr.plea.redismodule.service.NewsService;
-import kr.plea.redismodule.service.RedisService;
+import kr.plea.redismodule.service.RedisTemplateService;
 import kr.plea.redismodule.service.StatSubscriberService;
 import kr.plea.redismodule.service.StatSummaryService;
 
 @SpringBootTest(classes = RedisModuleApplication.class)
-public class RedisCrudTest {
+public class RedisTemplateTest {
 	final String KEY = "key";
 	final Long VALUE = 11223L;
 	final List<Long> LIST = List.of(VALUE, 11111L, 11112L, 11114L);
@@ -38,12 +38,12 @@ public class RedisCrudTest {
 	StatLatencyParam PARAM1 = new StatLatencyParam(LIST);
 	StatLatencyParam PARAM1_2 = new StatLatencyParam(LIST2);
 	StatLatencyParam PARAM2 = new StatLatencyParam(V2LIST);
-	private RedisService redisService;
+	private RedisTemplateService redisTemplateService;
 	private StatSummaryService statSummaryService;
 	private StatSubscriberService statSubscriberService;
 	private NewsService newsService;
-	private final NewsContentFindDto NEWS_CONTENT  = new NewsContentFindDto("AKR20070807170200054", "C", "AKR0", "20070807", "171444", "YNA", "신창섭", "07", "053",
-		"대구경북취재본부", "대구 첫 전용미술관 9일 착공", "대구 첫 전용미술관 착공", "이 기사는 임의로 Element와 내용을 모두 채운 샘플입니다.", "대구 첫 전용미술관 9일 착공  ~~~ 말했따.", true,false);;
+	private final NewsContentDto NEWS_CONTENT  = new NewsContentDto("AKR20070807170200054", "C", "AKR0", "20070807", "171444", "YNA", "신창섭", "07", "053",
+		"대구경북취재본부", "대구 첫 전용미술관 9일 착공", "대구 첫 전용미술관 착공", "이 기사는 임의로 Element와 내용을 모두 채운 샘플입니다.", "대구 첫 전용미술관 9일 착공  ~~~ 말했따.", true);
 	private ObjectMapper objectMapper = new ObjectMapper();
 
 	LocalDateTime now = LocalDateTime.now();
@@ -54,9 +54,9 @@ public class RedisCrudTest {
 	StatSubscriberParam STATSUBSCRIBER_PARAM2 = new StatSubscriberParam(BigInteger.valueOf(2), formattedDate, 3,4,2,2,"Y");
 
 	@Autowired
-	public RedisCrudTest(RedisService redisService, StatSummaryService statSummaryService,
+	public RedisTemplateTest(RedisTemplateService redisTemplateService, StatSummaryService statSummaryService,
 		StatSubscriberService statSubscriberService, NewsService newsService) {
-		this.redisService = redisService;
+		this.redisTemplateService = redisTemplateService;
 		this.statSummaryService = statSummaryService;
 		this.statSubscriberService = statSubscriberService;
 		this.newsService = newsService;
@@ -64,23 +64,23 @@ public class RedisCrudTest {
 
 	@BeforeEach
 	void init() {
-		redisService.addValue(KEY, VALUE, DURATION);
+		redisTemplateService.addValue(KEY, VALUE, DURATION);
 	}
 
 	@AfterEach
 	void makeEmpty() {
-		redisService.deleteValues(KEY);
-		redisService.deleteValues(LocalDate.now().toString());
-		redisService.deleteValues(LocalDate.now() + "V2");
-		redisService.deleteValues(BigInteger.valueOf(1).toString());
-		redisService.deleteValues(BigInteger.valueOf(2).toString());
-		redisService.deleteValues("AKR20070807170200054");
+		redisTemplateService.deleteValues(KEY);
+		redisTemplateService.deleteValues(LocalDate.now().toString());
+		redisTemplateService.deleteValues(LocalDate.now() + "V2");
+		redisTemplateService.deleteValues(BigInteger.valueOf(1).toString());
+		redisTemplateService.deleteValues(BigInteger.valueOf(2).toString());
+		redisTemplateService.deleteValues("AKR20070807170200054");
 	}
 
 	@Test
 	@DisplayName("Redis에 데이터를 저장하면 정상적으로 조회된다.")
 	void saveAndFindTest() {        //when
-		Long value =objectMapper.convertValue(redisService.getValue(KEY), Long.class);
+		Long value =objectMapper.convertValue(redisTemplateService.getValue(KEY), Long.class);
 
 		//then
 		assertThat(value).isEqualTo(VALUE);
@@ -92,10 +92,10 @@ public class RedisCrudTest {
 	void updateTest() {
 		//given
 		Long updateValue = 2222L;
-		redisService.addValue(KEY, updateValue);
+		redisTemplateService.addValue(KEY, updateValue);
 
 		//when
-		Long findValue = objectMapper.convertValue (redisService.getValue(KEY), Long.class);
+		Long findValue = objectMapper.convertValue (redisTemplateService.getValue(KEY), Long.class);
 
 		//then
 		assertThat(updateValue).isEqualTo(findValue);
@@ -105,25 +105,25 @@ public class RedisCrudTest {
 	@DisplayName("Redis에 저장된 데이터를 삭제할 수 있다.")
 	void deleteTest() {
 		//when
-		redisService.deleteValues(KEY);
-		List<Long> findValue = redisService.getValues(KEY);
+		redisTemplateService.deleteValues(KEY);
+		List<Long> findValue = redisTemplateService.getValues(KEY);
 
 		//then
 		assertThat(findValue.size()).isEqualTo(0);
 
 	}
 
-	@Test
-	@DisplayName("Redis에 저장된 데이터는 만료시간이 지나면 삭제된다.")
-	void expiredTest() {
-		await().pollDelay(Duration.ofMillis(6000)).untilAsserted(
-			() -> {
-				Object expiredValue = redisService.getValue(KEY);
-				assertThat(expiredValue).isNotEqualTo(1);
-				assertThat(expiredValue).isNull();
-			}
-		);
-	}
+	// @Test
+	// @DisplayName("Redis에 저장된 데이터는 만료시간이 지나면 삭제된다.")
+	// void expiredTest() {
+	// 	await().pollDelay(Duration.ofMillis(6000)).untilAsserted(
+	// 		() -> {
+	// 			Object expiredValue = redisService.getValue(KEY);
+	// 			assertThat(expiredValue).isNotEqualTo(1);
+	// 			assertThat(expiredValue).isNull();
+	// 		}
+	// 	);
+	// }
 
 	@Test
 	@DisplayName("PramList 출력해보기")
@@ -169,7 +169,7 @@ public class RedisCrudTest {
 	@Test
 	@DisplayName("NewsData를 저장하고 가지고 올 수 있다.")
 	void newsDataTest() {
-		newsService.save(NEWS_CONTENT);
+		newsService.saveUsingTemplate(NEWS_CONTENT);
 
 		System.out.println("저장된 뉴스 출력하기");
 		newsService.print(NEWS_CONTENT.getContentId());

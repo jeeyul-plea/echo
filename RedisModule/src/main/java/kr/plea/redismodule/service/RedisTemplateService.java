@@ -18,7 +18,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @RequiredArgsConstructor
 @Component
-public class RedisService {
+public class RedisTemplateService {
 	private final RedisTemplate<String, Object> redisTemplate;
 
 	public void addValue(String key, Object data) {
@@ -33,9 +33,7 @@ public class RedisService {
 
 	public void addAll(String key, List<Long> data) {
 		ListOperations<String, Object> ops = redisTemplate.opsForList();
-		for(Object value : data){
-			ops.rightPush(key, value);
-		}
+		ops.leftPushAll(key, data);
 	}
 
 	public void addList(String key, Object data) {
